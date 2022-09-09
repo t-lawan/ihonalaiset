@@ -22,29 +22,26 @@ const NavbarLinksWrapper = styled.div`
 
 const NavbarLink = styled(Link)`
     text-decoration: none;
-    color: ${Colours.dark_purple};
+    color: ${Colours.neon_green};
 `
 
 const Navbar = () => {
     const navbarLinks = [
         {
             to: '/',
-            title: 'Home'
+            title: 'INFO'
         },
         {
-            to: '/cube',
-            title: 'Cube'
+            to: '/portfolio',
+            title: 'Ø'
         },
-        // {
-        //     to: '/portfolio',
-        //     title: 'Portfolio'
-        // },
     ]
 
 
     return (
         <NavbarWrapper>
             <NavbarLinksWrapper>
+            <p></p>
             {navbarLinks.map((navbarLink, id) => (
                 <NavbarLink key={id} to={navbarLink.to}> {navbarLink.title} </NavbarLink>
             ))}

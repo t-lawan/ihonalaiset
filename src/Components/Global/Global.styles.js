@@ -18,6 +18,7 @@ export const size = {
   export const Colours = {
       dark_purple : 'rgb(54, 54, 82)',
       light_purple : 'rgb(240, 235, 255)',
+      neon_green: '#83ff0c'
   }
 
 export const GlobalStyle = createGlobalStyle`

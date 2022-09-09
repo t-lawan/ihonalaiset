@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, Component } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls';
 
@@ -15,6 +16,15 @@ import { Colours } from '../Components/Global/Global.styles';
 import AstronautGLB from '../Assets/Models/Astronaut.glb';
 import Overlay from '../Components/Overlay/Overlay';
 import { ITEM_LIST } from '../Utility/Data/ItemList';
+
+import DiamondOBJ from '../Assets/Models/Diamond.obj';
+import FlowerOBJ from '../Assets/Models/Flower.obj';
+import MushroomOBJ from '../Assets/Models/Mushroom.obj';
+import SporeOBJ from '../Assets/Models/Spore.obj';
+import SwirlOBJ from '../Assets/Models/Swirl.obj';
+import { Vector3 } from 'three';
+import LoadingPage from '../Components/LoadingPage/LoadingPage';
+// import { Perlin } from 'THREE_Noise'; 
 
 const TestEnvironmentWrapper = styled.div`height: 100vh;`;
 
@@ -43,6 +53,7 @@ class PortfolioEnvironment extends Component {
 	composer;
 	unrealBloomPass;
 	clickableObjects = [];
+	spheres = [];
 
 	constructor(props) {
 		super(props);
@@ -91,11 +102,11 @@ class PortfolioEnvironment extends Component {
 		this.setupCamera();
 		this.setupControls();
 		this.setupRenderer();
-
+		this.generateSpheres(500);
 		this.setupPostProcessing();
-		// this.setupLoadingManager();
-		// this.setupRayCaster()
-		// this.setupMouse()
+		this.setupLoadingManager();
+		this.setupRayCaster()
+		this.setupMouse()
 		this.mount.appendChild(this.renderer.domElement); // mount using React ref
 	};
 
@@ -105,16 +116,19 @@ class PortfolioEnvironment extends Component {
      * @memberof CubeEnvironment
      */
 	populateScene = () => {
-		this.addHelpers();
+		// this.addHelpers();
 
 		// Add Cubes
-		this.addCube(new THREE.Vector3(10, 0, -5), ITEM_LIST.SOY_CUBA);
-		this.addCube(new THREE.Vector3(-20, 5, -30), ITEM_LIST.MONA_LISA);
-		this.addCube(new THREE.Vector3(20, 5, -26), ITEM_LIST.PHARCYDE);
+		// this.addCube(new THREE.Vector3(0,0,0), ITEM_LIST.MONA_LISA);
+		// this.addCube(new THREE.Vector3(-20,5,-30), ITEM_LIST.PHARCYDE);
+		// this.addCube(new THREE.Vector3(20,5,-26), ITEM_LIST.SOY_CUBA);
+
 		this.addLights();
-		// this.addModel(AstronautGLB, new THREE.Vector3(0,0,0), ITEM_LIST.ITEM_ONE);
-		// this.addModel(AstronautGLB, new THREE.Vector3(-20,5,-30), ITEM_LIST.ITEM_TWO);
-		// this.addModel(AstronautGLB, new THREE.Vector3(20,5,-26), ITEM_LIST.ITEM_THREE);
+		this.addOBJModel(DiamondOBJ, new THREE.Vector3(0,5,0), ITEM_LIST.MONA_LISA);
+		this.addOBJModel(FlowerOBJ, new THREE.Vector3(-20,5,-30), ITEM_LIST.PHARCYDE);
+		this.addOBJModel(MushroomOBJ, new THREE.Vector3(20,5,-26), ITEM_LIST.SOY_CUBA);
+		this.addOBJModel(SporeOBJ, new THREE.Vector3(30,5,-26), ITEM_LIST.SOY_CUBA);
+		this.addOBJModel(MushroomOBJ, new THREE.Vector3(20,5,-26), ITEM_LIST.SOY_CUBA);
 		// this.setupFog();
 	};
 	/**
@@ -205,8 +219,10 @@ class PortfolioEnvironment extends Component {
      * @memberof CubeEnvironment
      */
 	setupRenderer = () => {
-		this.renderer = new THREE.WebGLRenderer();
-		this.renderer.setClearColor(new THREE.Color('rgb(240, 235, 255)'));
+		this.renderer = new THREE.WebGLRenderer({
+			antialias: true
+		});
+		this.renderer.setClearColor(new THREE.Color('rgb(0, 0, 0)'));
 		this.renderer.setSize(this.width, this.height);
 	};
 
@@ -342,6 +358,33 @@ class PortfolioEnvironment extends Component {
 		});
 	};
 
+	addOBJModel = (object, position, project) => {
+		// Add manager to loader
+		const loader = new OBJLoader(this.manager);
+		// Instatiate new Object3D for the model
+		let model = new THREE.Object3D();
+		// console.log("OBJ", object)
+
+		// Load the model using call back
+		loader.load(object, (obj) => {
+			console.log('OBJ', obj)
+			model = obj;
+
+			// Sets position of Model
+			model.position.set(position.x, position.y, position.z);
+			model.scale.multiply(new THREE.Vector3(0.05, 0.05, 0.05));
+
+			// Assign project data
+			model.userData.project = project;
+			model.traverse((object) => {
+				object.userData.project = project;
+			});
+
+			this.clickableObjects.push(model);
+			this.scene.add(model);
+		});
+	};
+
 	/**
 	 *
 	 *
@@ -351,6 +394,47 @@ class PortfolioEnvironment extends Component {
 		this.addAxesHelper();
 		this.addGridHelper();
 	};
+
+	generateSpheres = (numberOfSpheres = 10) => {
+		for(let x = 0; x < numberOfSpheres; x++){
+			this.generateSphere(this.generateRandomPositions());
+		}
+	};
+
+	generateRandomPositions = () => {
+		const x = Math.floor(Math.random() * 100) - 100/2;
+		const y = Math.floor(Math.random() * 100) - 100/2;
+		const z = Math.floor(Math.random() * 100) - 100/2;
+		return new THREE.Vector3(x,y,z)
+	};
+
+	generateSphere = (position) => {
+		const geometry = new THREE.SphereGeometry( 0.1, 32, 16 );
+		const material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+		const sphere = new THREE.Mesh( geometry, material );
+		sphere.position.add(position);
+		
+		this.spheres.push(sphere);
+		this.scene.add(sphere);
+	}
+
+	moveSpheres = () => {
+		this.spheres.forEach((sphere) => {
+			this.moveSphere(sphere);
+		})
+	}
+
+	moveSphere = (sphere) => {
+		const x = Math.random()/100 - 0.005;
+		const y = Math.random()/100 - 0.005;
+		const z = Math.random()/100 - 0.005;
+
+		const position = new THREE.Vector3(x,y,z);
+
+		sphere.position.add(position);
+	}
+	
+
 
 	/**
 	 * 
@@ -424,6 +508,7 @@ class PortfolioEnvironment extends Component {
 	 * @memberof PortfolioEnvironment
 	 */
 	loadFinished = () => {
+		console.log('LOADING FINISHED')
 		this.setState({
 			hasLoaded: true
 		});
@@ -442,6 +527,8 @@ class PortfolioEnvironment extends Component {
 		// 	this.model.rotation.x += 0.01;
 		// 	this.model.rotation.y += 0.01;
 		// }
+
+		this.moveSpheres();
 
 		// This is required the FlyControls to work
 		if (this.clock) {
@@ -481,7 +568,7 @@ class PortfolioEnvironment extends Component {
      * @memberof CubeEnvironment
      */
 	addEventListeners = () => {
-		// document.addEventListener("dblclick", this.onDocumentDoubleClick, false);
+		document.addEventListener("dblclick", this.onDocumentDoubleClick, false);
 		window.addEventListener('resize', this.handleWindowResize, false);
 	};
 
@@ -491,7 +578,7 @@ class PortfolioEnvironment extends Component {
 	 * @memberof PortfolioEnvironment
 	 */
 	removeEventListeners = () => {
-		// document.removeEventListener("dblclick", this.onDocumentDoubleClick);
+		document.removeEventListener("dblclick", this.onDocumentDoubleClick);
 		window.removeEventListener('resize', this.onWindowResize);
 	};
 
@@ -555,6 +642,7 @@ class PortfolioEnvironment extends Component {
 	render() {
 		return (
 			<React.Fragment>
+				<LoadingPage show={!this.state.hasLoaded} />
 				<Overlay project={this.state.overlayProject} show={this.state.showOverlay} hide={this.hideOverlay} />
 				<TestEnvironmentWrapper ref={(ref) => (this.mount = ref)} />
 			</React.Fragment>

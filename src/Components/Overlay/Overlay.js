@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, Component } from 'react';
 import styled from 'styled-components';
+import { Colours } from '../Global/Global.styles';
 
 const OverlayWrapper = styled.div`
 	position: absolute;
 	width: 100vw;
 	height: 100vh;
-	background: rgba(0, 255, 0);
+	background: black;
 	display: ${(props) => (props.show ? 'block' : 'none')};
 `;
 
@@ -23,10 +24,10 @@ const VideoIFrame = styled.iframe`
 	height: 70vh;
 `;
 
-const Title = styled.h1`color: blue;`;
+const Title = styled.h1`color: ${Colours.neon_green};;`;
 
 const CloseOverlay = styled.p`
-	color: blue;
+	color: ${Colours.neon_green};
 	cursor: pointer;
 `
 
@@ -39,6 +40,8 @@ const Overlay = (props) => {
 
 				
 			<FlexWrapper>
+				<CloseOverlay onClick={() => onClick()}> BACK </CloseOverlay>
+
 				{/*  Render Title */}
 				{props.project ? <Title>{props.project.title} </Title> : null}
 
@@ -52,7 +55,6 @@ const Overlay = (props) => {
 						allowFullScreen={true}
 					/>
 				) : null}
-                <CloseOverlay onClick={() => onClick()}> close </CloseOverlay>
 			</FlexWrapper>
 		</OverlayWrapper>
 	);
