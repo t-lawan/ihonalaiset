@@ -8,8 +8,6 @@ function App() {
 		<Router>
 			<Routes>
 				<Route exact path="/" element={<Home />} />
-				<Route exact path="/cube" element={<Cube />} />
-				<Route exact path="/portfolio" element={<Portfolio />} />
 			</Routes>
 		</Router>
 	);

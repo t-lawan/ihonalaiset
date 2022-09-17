@@ -20,8 +20,8 @@ const FlexWrapper = styled.div`
 `;
 
 const VideoIFrame = styled.iframe`
-	width: 70vw;
-	height: 70vh;
+	width: 100vw;
+	height: 100vh;
 `;
 
 const Title = styled.h1`color: ${Colours.neon_green};;`;
@@ -29,6 +29,8 @@ const Title = styled.h1`color: ${Colours.neon_green};;`;
 const CloseOverlay = styled.p`
 	color: ${Colours.neon_green};
 	cursor: pointer;
+	position: absolute;
+	top: 2.5%;
 `
 
 const Overlay = (props) => {
@@ -41,10 +43,6 @@ const Overlay = (props) => {
 				
 			<FlexWrapper>
 				<CloseOverlay onClick={() => onClick()}> BACK </CloseOverlay>
-
-				{/*  Render Title */}
-				{props.project ? <Title>{props.project.title} </Title> : null}
-
 				{/*  Render Video element */}
 
 				{props.project && props.project.type == 'VIDEO' && props.project.video_url ? (

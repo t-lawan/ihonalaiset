@@ -24,6 +24,7 @@ import SporeOBJ from '../Assets/Models/Spore.obj';
 import SwirlOBJ from '../Assets/Models/Swirl.obj';
 import { Vector3 } from 'three';
 import LoadingPage from '../Components/LoadingPage/LoadingPage';
+import Navbar from '../Components/Navbar/Navbar';
 // import { Perlin } from 'THREE_Noise'; 
 
 const TestEnvironmentWrapper = styled.div`height: 100vh;`;
@@ -54,7 +55,7 @@ class PortfolioEnvironment extends Component {
 	unrealBloomPass;
 	clickableObjects = [];
 	spheres = [];
-
+	audio = null;
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -103,12 +104,20 @@ class PortfolioEnvironment extends Component {
 		this.setupControls();
 		this.setupRenderer();
 		this.generateSpheres(500);
-		this.setupPostProcessing();
+		// this.setupPostProcessing();
 		this.setupLoadingManager();
 		this.setupRayCaster()
 		this.setupMouse()
 		this.mount.appendChild(this.renderer.domElement); // mount using React ref
 	};
+
+	setupAudio = () => {
+		this.audio = new  THREE.AudioListener()
+		let audioLoader = new THREE.AudioLoader(this.manager);
+		audioLoader.load("", (buffer) => {
+
+		});
+	}
 
 	/**
      *
@@ -642,6 +651,7 @@ class PortfolioEnvironment extends Component {
 	render() {
 		return (
 			<React.Fragment>
+				<Navbar />
 				<LoadingPage show={!this.state.hasLoaded} />
 				<Overlay project={this.state.overlayProject} show={this.state.showOverlay} hide={this.hideOverlay} />
 				<TestEnvironmentWrapper ref={(ref) => (this.mount = ref)} />

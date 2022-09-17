@@ -8,7 +8,7 @@ const LoadingPageWrapper = styled.div`
     left: 0;
     width: 100%;
     height: auto;
-    background: pink;
+    background: black;
     height: 100vh;
     width: 100vw;
     display: ${props => props.show ? "block" : "none"};
@@ -17,6 +17,8 @@ const LoadingPageWrapper = styled.div`
 const LoadingPageImage = styled.img`
     height: 100%;
     width: 100%;
+    filter: invert(1);
+    object-fit: contain;
 `
 
 const LoadingPage = (props) => {

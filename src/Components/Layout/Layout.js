@@ -10,7 +10,7 @@ const Layout = props => {
 
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       <GlobalStyle />
       <Main>{props.children}</Main>
     </div>
