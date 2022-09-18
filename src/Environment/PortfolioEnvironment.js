@@ -471,8 +471,9 @@ class PortfolioEnvironment extends Component {
 		const x = Math.random()/100 - 0.005;
 		const y = Math.random()/100 - 0.005;
 		const z = Math.random()/100 - 0.005;
+		const speed = 1.5;
 
-		const position = new THREE.Vector3(x,y,z);
+		const position = new THREE.Vector3(x * speed,y * speed,z * speed);
 
 		sphere.position.add(position);
 	}
