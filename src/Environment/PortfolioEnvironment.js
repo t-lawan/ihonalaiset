@@ -352,8 +352,8 @@ class PortfolioEnvironment extends Component {
 		this.scene.add(lights[2]);
 	};
 
-	addPointLight = (position) => {
-		const light = new THREE.PointLight(new THREE.Color('white'), 0.1, 0);
+	addPointLight = (position, colour) => {
+		const light = new THREE.PointLight(colour, 0.3, 0);
 		light.position.set(position.x, position.y, position.z );
 		this.scene.add(light);
 	}
@@ -399,26 +399,31 @@ class PortfolioEnvironment extends Component {
 
 		// Load the model using call back
 		loader.load(object, (obj) => {
-			console.log('OBJ', obj)
 			model = obj;
 
 			// Sets position of Model
 			model.position.set(position.x, position.y, position.z);
 			model.scale.multiply(new THREE.Vector3(0.05, 0.05, 0.05));
+			// model.material.
 
 			// Assign project data
 			model.userData.project = project;
 			model.traverse((object) => {
 				object.position.set(position.x, position.y, position.z);
 				object.userData.project = project;
+				if(object.material && project.isOn){
+					object.material.color = new THREE.Color(Colours.neon_green);
+				}
 			});
 
 			this.clickableObjects.push(model);
 
 
 			this.scene.add(model);
-			let val = new THREE.Vector3(0,10,0)
-			this.addPointLight(position.sub(val));
+
+			// Setup for point lights
+			let val = new THREE.Vector3(0,-1 ,0)
+			this.addPointLight(position.sub(val), new THREE.Color(project.isOn ? 'green' : 'white'));
 
 		});
 	};
