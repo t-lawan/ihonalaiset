@@ -25,7 +25,7 @@ import SwirlOBJ from '../Assets/Models/Swirl.obj';
 import { Vector3 } from 'three';
 import LoadingPage from '../Components/LoadingPage/LoadingPage';
 import Navbar from '../Components/Navbar/Navbar';
-// import { Perlin } from 'THREE_Noise'; 
+import MUSIC from '../Assets/Audio/MUSIC.mp3'
 
 const TestEnvironmentWrapper = styled.div`height: 100vh;`;
 
@@ -63,8 +63,9 @@ class PortfolioEnvironment extends Component {
 			itemsLoaded: 0,
 			itemsTotal: 0,
 			showOverlay: false,
-			overlayProject: null,
-			pause: false
+			overlayItem: null,
+			pause: false, 
+			soundIsPlaying: false
 		};
 	}
 
@@ -103,19 +104,29 @@ class PortfolioEnvironment extends Component {
 		this.setupCamera();
 		this.setupControls();
 		this.setupRenderer();
-		this.generateSpheres(500);
+		this.generateSpheres(1000);
 		// this.setupPostProcessing();
 		this.setupLoadingManager();
 		this.setupRayCaster()
 		this.setupMouse()
+		this.setupAudio();
 		this.mount.appendChild(this.renderer.domElement); // mount using React ref
 	};
 
 	setupAudio = () => {
-		this.audio = new  THREE.AudioListener()
-		let audioLoader = new THREE.AudioLoader(this.manager);
-		audioLoader.load("", (buffer) => {
+		this.audioListener = new  THREE.AudioListener();
+		this.scene.add(this.audioListener);
 
+		this.sound = new THREE.Audio(this.audioListener);
+		this.scene.add(this.sound);
+
+		// this.camera.add(this.audio);
+		let audioLoader = new THREE.AudioLoader(this.manager);
+		audioLoader.load(MUSIC, (buffer) => {
+			this.sound.setBuffer( buffer );
+			this.sound.setLoop( true );
+			this.sound.setVolume( 0.5 );
+			this.toggleSound();
 		});
 	}
 
@@ -132,12 +143,13 @@ class PortfolioEnvironment extends Component {
 		// this.addCube(new THREE.Vector3(-20,5,-30), ITEM_LIST.PHARCYDE);
 		// this.addCube(new THREE.Vector3(20,5,-26), ITEM_LIST.SOY_CUBA);
 
+
 		this.addLights();
-		this.addOBJModel(DiamondOBJ, new THREE.Vector3(0,5,0), ITEM_LIST.MONA_LISA);
-		this.addOBJModel(FlowerOBJ, new THREE.Vector3(-20,5,-30), ITEM_LIST.PHARCYDE);
-		this.addOBJModel(MushroomOBJ, new THREE.Vector3(20,5,-26), ITEM_LIST.SOY_CUBA);
-		this.addOBJModel(SporeOBJ, new THREE.Vector3(30,5,-26), ITEM_LIST.SOY_CUBA);
-		this.addOBJModel(MushroomOBJ, new THREE.Vector3(20,5,-26), ITEM_LIST.SOY_CUBA);
+		this.addOBJModel(DiamondOBJ, new THREE.Vector3(0,0,0), ITEM_LIST.MONA_LISA); // 0,0,0 but adjusted due to file
+		this.addOBJModel(MushroomOBJ, new THREE.Vector3(25,0,0), ITEM_LIST.SOY_CUBA);
+		this.addOBJModel(SporeOBJ, new THREE.Vector3(15,0,-15), ITEM_LIST.LOREM_IPSUM);
+		this.addOBJModel(FlowerOBJ, new THREE.Vector3(-5,0,-10), ITEM_LIST.PHARCYDE);
+		this.addOBJModel(SwirlOBJ, new THREE.Vector3(0,0,10), ITEM_LIST.TIME);
 		// this.setupFog();
 	};
 	/**
@@ -162,7 +174,9 @@ class PortfolioEnvironment extends Component {
 			0.1, // near plane
 			1000 // far plane
 		);
-		this.camera.position.z = 9; // is used here to set some distance from a cube that is located at z = 0
+		this.camera.position.x = 0; // is used here to set some distance from a cube that is located at z = 0
+		this.camera.position.y = 0; // is used here to set some distance from a cube that is located at z = 0
+		this.camera.position.z = 40; // is used here to set some distance from a cube that is located at z = 0
 	};
 
 	/**
@@ -209,6 +223,9 @@ class PortfolioEnvironment extends Component {
 		this.controls.enableKeys = true;
 		this.controls.enablePan = true;
 		this.clock = new THREE.Clock();
+		this.controls.target.set(0,0,0);
+		this.controls.minDistance = 1;
+		this.controls.maxDistance = 50;
 		this.controls.update();
 	};
 
@@ -335,6 +352,12 @@ class PortfolioEnvironment extends Component {
 		this.scene.add(lights[2]);
 	};
 
+	addPointLight = (position) => {
+		const light = new THREE.PointLight(new THREE.Color('white'), 0.1, 0);
+		light.position.set(position.x, position.y, position.z );
+		this.scene.add(light);
+	}
+
 	/**
 	 * Loads model and adds to the scene
 	 * 
@@ -386,11 +409,17 @@ class PortfolioEnvironment extends Component {
 			// Assign project data
 			model.userData.project = project;
 			model.traverse((object) => {
+				object.position.set(position.x, position.y, position.z);
 				object.userData.project = project;
 			});
 
 			this.clickableObjects.push(model);
+
+
 			this.scene.add(model);
+			let val = new THREE.Vector3(0,10,0)
+			this.addPointLight(position.sub(val));
+
 		});
 	};
 
@@ -419,7 +448,7 @@ class PortfolioEnvironment extends Component {
 
 	generateSphere = (position) => {
 		const geometry = new THREE.SphereGeometry( 0.1, 32, 16 );
-		const material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+		const material = new THREE.MeshPhongMaterial( { color: 0xffffff, transparent: true, opacity: 0.3 } );
 		const sphere = new THREE.Mesh( geometry, material );
 		sphere.position.add(position);
 		
@@ -636,11 +665,35 @@ class PortfolioEnvironment extends Component {
 				// Set the overlay and project
 				this.setState({
 					showOverlay: true,
-					overlayProject: mesh.object.userData.project
+					overlayItem: mesh.object.userData.project
 				});
 			}
 		}
 	};
+
+	showInfoOverlay = () => {
+		this.setState({
+			showOverlay: true,
+			overlayItem: ITEM_LIST.ABOUT
+		});
+	}
+
+
+
+	toggleSound = () => {
+		if(this.sound.isPlaying){
+
+			this.sound.pause();
+			this.setState({
+				soundIsPlaying: false
+			})
+		} else {
+			this.sound.play();
+			this.setState({
+				soundIsPlaying: true
+			})
+		}
+	}
 
 	/**
      *
@@ -651,9 +704,9 @@ class PortfolioEnvironment extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<Navbar />
+				<Navbar isPlaying={this.state.soundIsPlaying} toggleMusic={this.toggleSound.bind(this)} openInfoModal={this.showInfoOverlay}/>
 				<LoadingPage show={!this.state.hasLoaded} />
-				<Overlay project={this.state.overlayProject} show={this.state.showOverlay} hide={this.hideOverlay} />
+				<Overlay item={this.state.overlayItem} show={this.state.showOverlay} hide={this.hideOverlay} />
 				<TestEnvironmentWrapper ref={(ref) => (this.mount = ref)} />
 			</React.Fragment>
 		);

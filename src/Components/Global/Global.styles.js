@@ -1,4 +1,6 @@
 import styled, { createGlobalStyle } from "styled-components";
+import NewEdge6666 from '../../Assets/Fonts/NewEdge6666-LightRounded.woff2'
+
 export const size = {
     mobileS: "320px",
     mobileM: "420px",
@@ -15,6 +17,7 @@ export const size = {
     desktop: "2260px"
   };
 
+
   export const Colours = {
       dark_purple : 'rgb(54, 54, 82)',
       light_purple : 'rgb(240, 235, 255)',
@@ -22,12 +25,12 @@ export const size = {
   }
 
 export const GlobalStyle = createGlobalStyle`
-  ${'' /* @font-face {
-    font-family: 'TypeWriterRegular';
-    src: url(${TypeWriterRegular}) format('truetype');
+   @font-face {
+    font-family: 'NewEdge6666';
+    src: url(${NewEdge6666}) format('truetype');
     font-weight: normal;
     font-style: normal;
-  } */}
+  } 
 
   * {
     box-sizing: border-box;
@@ -41,6 +44,7 @@ html, body {
   overflow: hidden;
   width: 100%;
   -webkit-font-smoothing: antialiased;
+  font-family: 'NewEdge6666', Sans-Serif ;
 }
 
 .leaflet-container {

@@ -1,6 +1,7 @@
 export class OverlayItem {
     title;
     type;
+    video_url;
     text;
 
     constructor(title, type, video_url, text = null) {
