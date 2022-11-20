@@ -61,7 +61,7 @@ const Overlay = (props) => {
         props.item.type === "VIDEO" &&
         props.item.video_url ? (
           <VideoIFrame
-            src={"https://player.vimeo.com/video/751273705"}
+            src={props.item.video_url}
             title={props.item.title}
             frameBorder="0"
             allowFullScreen={true}
