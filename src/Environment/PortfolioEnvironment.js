@@ -26,6 +26,8 @@ import { Vector3 } from 'three';
 import LoadingPage from '../Components/LoadingPage/LoadingPage';
 import Navbar from '../Components/Navbar/Navbar';
 import MUSIC from '../Assets/Audio/MUSIC.mp3'
+import BoidManager from '../Utility/BoidManager/BoidManager';
+import { BoidHelper } from '../Utility/BoidHelper/BoidHelper';
 
 const TestEnvironmentWrapper = styled.div`height: 100vh;`;
 
@@ -56,6 +58,9 @@ class PortfolioEnvironment extends Component {
 	clickableObjects = [];
 	spheres = [];
 	audio = null;
+	boidManager;
+	obstacles = []
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -68,6 +73,8 @@ class PortfolioEnvironment extends Component {
 			soundIsPlaying: false
 		};
 	}
+
+
 
 	/**
      * This is a React Lifecycle method.
@@ -104,14 +111,23 @@ class PortfolioEnvironment extends Component {
 		this.setupCamera();
 		this.setupControls();
 		this.setupRenderer();
-		this.generateSpheres(1000);
+		// this.generateSpheres(1000);
 		// this.setupPostProcessing();
 		this.setupLoadingManager();
 		this.setupRayCaster()
 		this.setupMouse()
 		this.setupAudio();
+		this.setupBoidManager()
+
 		this.mount.appendChild(this.renderer.domElement); // mount using React ref
 	};
+
+	setupBoidManager = () => {
+		this.boidManager = new BoidManager(this.scene, 500, this.obstacles, null)
+		this.boidManager.boids.forEach(boid => {
+			this.scene.add(boid.mesh);
+		})
+	}
 
 	setupAudio = () => {
 		this.audioListener = new  THREE.AudioListener();
@@ -414,8 +430,15 @@ class PortfolioEnvironment extends Component {
 				if(object.material && project.isOn){
 					object.material.color = new THREE.Color(Colours.neon_green);
 				}
+	
 			});
 
+			const box = new THREE.Box3().setFromObject(model);
+
+			let size = new THREE.Vector3();
+			box.getSize(size);
+
+			BoidHelper.addObstacle(this.obstacles, this.scene, size.x, size.y, size.z, 0x555555 ,model.position.x, model.position.y, model.position.z)
 			this.clickableObjects.push(model);
 
 
@@ -585,6 +608,11 @@ class PortfolioEnvironment extends Component {
 		} else {
 			this.renderer.render(this.scene, this.camera);
 
+		}
+		
+		if(this.boidManager){
+			let delta = this.clock.getDelta();
+			this.boidManager.update(delta)
 		}
 
 		// The window.requestAnimationFrame() method tells the browser that you wish to perform
