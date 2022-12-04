@@ -11,7 +11,7 @@ const wanderWeight = 0.2
 // Steer towards the average position of nearby boids
 const cohesionWeight = 0.5
 // Steers away from nearby boids
-const separationWeight = 2
+const separationWeight = 5
 // Adopt the average velocity of bearby boids
 const alignmentWeight = 1
 

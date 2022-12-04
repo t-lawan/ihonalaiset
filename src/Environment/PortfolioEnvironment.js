@@ -123,7 +123,7 @@ class PortfolioEnvironment extends Component {
 	};
 
 	setupBoidManager = () => {
-		this.boidManager = new BoidManager(this.scene, 500, this.obstacles, null)
+		this.boidManager = new BoidManager(this.scene, 500, this.obstacles, new THREE.Vector3(0,0,0))
 		this.boidManager.boids.forEach(boid => {
 			this.scene.add(boid.mesh);
 		})
