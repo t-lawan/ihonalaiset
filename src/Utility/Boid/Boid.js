@@ -3,13 +3,13 @@ import { BoidHelper } from '../BoidHelper/BoidHelper';
 
 
 const minSpeed = 0.1
-const maxSpeed = 1
+const maxSpeed = 3
 
 const numSamplesForSmoothing = 20
 
 const wanderWeight = 0.2
 // Steer towards the average position of nearby boids
-const cohesionWeight = 0.5
+const cohesionWeight = 0.1
 // Steers away from nearby boids
 const separationWeight = 5
 // Adopt the average velocity of bearby boids
@@ -297,7 +297,7 @@ export default class Boid {
     }
   }
 
-  rndCoord(range = 295) {
+  rndCoord(range = 3) {
     return (Math.random() - 0.5) * range * 2
   }
   wander(delta) {

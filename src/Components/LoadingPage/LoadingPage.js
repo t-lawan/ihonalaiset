@@ -15,18 +15,27 @@ const LoadingPageWrapper = styled.div`
 `
 
 const LoadingPageImage = styled.img`
-    height: 100%;
-    width: 100%;
+    height: 50%;
+    width: 50%;
+
     filter: invert(1);
     object-fit: contain;
 `
-
+ const LoadingPageImageWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+ `
 const LoadingPage = (props) => {
 
 
     return (
         <LoadingPageWrapper show={props.show}>
-            <LoadingPageImage src={Ihonalaiset} />
+            <LoadingPageImageWrapper>
+                <LoadingPageImage src={Ihonalaiset} />
+            </LoadingPageImageWrapper>
         </LoadingPageWrapper>
     )
 }

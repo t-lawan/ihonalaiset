@@ -27,7 +27,8 @@ import LoadingPage from '../Components/LoadingPage/LoadingPage';
 import Navbar from '../Components/Navbar/Navbar';
 import MUSIC from '../Assets/Audio/MUSIC.mp3'
 import BoidManager from '../Utility/BoidManager/BoidManager';
-import { BoidHelper } from '../Utility/BoidHelper/BoidHelper';
+import { BoidHelper, Box } from '../Utility/BoidHelper/BoidHelper';
+
 
 const TestEnvironmentWrapper = styled.div`height: 100vh;`;
 
@@ -123,7 +124,11 @@ class PortfolioEnvironment extends Component {
 	};
 
 	setupBoidManager = () => {
+		let box = new Box(2, 2, 2)
+		this.obstacles.push(box)
+		this.scene.add(box);
 		this.boidManager = new BoidManager(this.scene, 500, this.obstacles, new THREE.Vector3(0,0,0))
+		
 		this.boidManager.boids.forEach(boid => {
 			this.scene.add(boid.mesh);
 		})
@@ -159,14 +164,20 @@ class PortfolioEnvironment extends Component {
 		// this.addCube(new THREE.Vector3(-20,5,-30), ITEM_LIST.PHARCYDE);
 		// this.addCube(new THREE.Vector3(20,5,-26), ITEM_LIST.SOY_CUBA);
 
-
+		this.addSceneLights();
 		this.addLights();
-		this.addOBJModel(DiamondOBJ, new THREE.Vector3(0,0,0), ITEM_LIST.MONA_LISA); // 0,0,0 but adjusted due to file
-		this.addOBJModel(MushroomOBJ, new THREE.Vector3(25,0,0), ITEM_LIST.SOY_CUBA);
-		this.addOBJModel(SporeOBJ, new THREE.Vector3(15,0,-15), ITEM_LIST.LOREM_IPSUM);
-		this.addOBJModel(FlowerOBJ, new THREE.Vector3(-5,0,-10), ITEM_LIST.PHARCYDE);
-		this.addOBJModel(SwirlOBJ, new THREE.Vector3(0,0,10), ITEM_LIST.TIME);
+		// this.addOBJModel(DiamondOBJ, new THREE.Vector3(0,0,0), ITEM_LIST.MONA_LISA); // 0,0,0 but adjusted due to file
+		// this.addOBJModel(MushroomOBJ, new THREE.Vector3(25,0,0), ITEM_LIST.SOY_CUBA);
+		// this.addOBJModel(SporeOBJ, new THREE.Vector3(15,0,-15), ITEM_LIST.LOREM_IPSUM);
+		// this.addOBJModel(FlowerOBJ, new THREE.Vector3(-5,0,-10), ITEM_LIST.PHARCYDE);
+		// this.addOBJModel(SwirlOBJ, new THREE.Vector3(0,0,10), ITEM_LIST.TIME);
 		// this.setupFog();
+
+		this.addOBJModel(SporeOBJ, new THREE.Vector3(-38,0,2.5), ITEM_LIST.LOREM_IPSUM); // 0,0,0 but adjusted due to file
+		this.addOBJModel(DiamondOBJ, new THREE.Vector3(5,0,0), ITEM_LIST.MONA_LISA); // 0,0,0 but adjusted due to file
+		this.addOBJModel(MushroomOBJ, new THREE.Vector3(5,0,0), ITEM_LIST.SOY_CUBA);
+		this.addOBJModel(SwirlOBJ, new THREE.Vector3(35,0,0), ITEM_LIST.TIME);
+
 	};
 	/**
 	 * This adds fog to the scene
@@ -278,23 +289,37 @@ class PortfolioEnvironment extends Component {
 		// 	bloomThreshold: 2.0,
 		// 	bloomRadius: 0.2
 		// };
-		// this.unrealBloomPass = new UnrealBloomPass(
-		// 	new THREE.Vector2(window.innerWidth, window.innerHeight),
-		// 	1.5,
-		// 	0.4,
-		// 	0.85
-		// );
-		// this.unrealBloomPass.threshold = params.bloomThreshold;
-		// this.unrealBloomPass.strength = params.bloomStrength;
-		// this.unrealBloomPass.radius = params.bloomRadius;
-		// this.renderer.toneMappingExposure = params.exposure;
 
+		let unrealBloomPass = new UnrealBloomPass(
+			new THREE.Vector2(window.innerWidth, window.innerHeight),
+			1.5,
+			0.4,
+			0.85
+		);
 
-		let pixelPass = new ShaderPass( PixelShader );
-		 pixelPass.uniforms[ 'resolution' ].value = new THREE.Vector2( window.innerWidth, window.innerHeight );
-		 pixelPass.uniforms[ 'resolution' ].value.multiplyScalar( window.devicePixelRatio );
-		 pixelPass.uniforms[ 'pixelSize' ].value = 4;
-		this.composer.addPass(pixelPass);
+		const params = {
+			exposure: 0.1,
+			bloomStrength: 0.5,
+			bloomThreshold: 0,
+			bloomRadius: 0
+		};
+
+		unrealBloomPass.threshold = params.bloomThreshold;
+		unrealBloomPass.strength = params.bloomStrength;
+		unrealBloomPass.radius = params.bloomRadius;
+		this.renderer.toneMappingExposure = params.exposure;
+
+		const bloomPass = new UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.5, 0.4, 0.85 );
+		bloomPass.threshold = params.bloomThreshold;
+		bloomPass.strength = params.bloomStrength;
+		bloomPass.radius = params.bloomRadius;
+		this.composer.addPass(bloomPass);
+
+		// let pixelPass = new ShaderPass( PixelShader );
+		//  pixelPass.uniforms[ 'resolution' ].value = new THREE.Vector2( window.innerWidth, window.innerHeight );
+		//  pixelPass.uniforms[ 'resolution' ].value.multiplyScalar( window.devicePixelRatio );
+		//  pixelPass.uniforms[ 'pixelSize' ].value = 4;
+		// this.composer.addPass(pixelPass);
 
 	};
 
@@ -368,8 +393,20 @@ class PortfolioEnvironment extends Component {
 		this.scene.add(lights[2]);
 	};
 
-	addPointLight = (position, colour) => {
-		const light = new THREE.PointLight(colour, 0.3, 0);
+	addSceneLights = () => {
+		const lights = [];
+		lights[0] = new THREE.RectAreaLight(0xffffff, 200, 1000, 1000);
+
+
+		lights[0].position.set(0, 0, 0);
+
+		const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.4 );
+		this.scene.add( light );
+		// this.scene.add(lights[0]);
+	};
+
+	addPointLight = (position, colour, intensity = 0.3) => {
+		const light = new THREE.PointLight(colour, intensity, 0);
 		light.position.set(position.x, position.y, position.z );
 		this.scene.add(light);
 	}
@@ -438,7 +475,7 @@ class PortfolioEnvironment extends Component {
 			let size = new THREE.Vector3();
 			box.getSize(size);
 
-			BoidHelper.addObstacle(this.obstacles, this.scene, size.x, size.y, size.z, 0x555555 ,model.position.x, model.position.y, model.position.z)
+			// BoidHelper.addObstacle(this.obstacles, this.scene, size.x, size.y, size.z, 0x555555 ,model.position.x, model.position.y, model.position.z)
 			this.clickableObjects.push(model);
 
 
@@ -446,7 +483,8 @@ class PortfolioEnvironment extends Component {
 
 			// Setup for point lights
 			let val = new THREE.Vector3(0,-1 ,0)
-			this.addPointLight(position.sub(val), new THREE.Color(project.isOn ? 'green' : 'white'));
+			this.addPointLight(position.sub(val), new THREE.Color(project.isOn ? 'pink' : 'white'), 0.1);
+			this.addPointLight(position.add(val), new THREE.Color(project.isOn ? 'green' : 'white'), 0.05);
 
 		});
 	};
