@@ -28,6 +28,9 @@ import Navbar from '../Components/Navbar/Navbar';
 import MUSIC from '../Assets/Audio/MUSIC.mp3'
 import BoidManager from '../Utility/BoidManager/BoidManager';
 import { BoidHelper, Box } from '../Utility/BoidHelper/BoidHelper';
+import Device from '../Utility/Device';
+import Instruction from '../Components/Instructions/Instructions';
+import Builder from '../Utility/Builder/Builder';
 
 
 const TestEnvironmentWrapper = styled.div`height: 100vh;`;
@@ -42,6 +45,8 @@ class PortfolioEnvironment extends Component {
 	//Dimensions
 	width;
 	height;
+
+	isMobile = false;
 
 	scene;
 	controls;
@@ -73,6 +78,11 @@ class PortfolioEnvironment extends Component {
 			pause: false, 
 			soundIsPlaying: false
 		};
+
+		// device detection
+		if (Device.isMobile()) {
+			this.isMobile = true;
+		}
 	}
 
 
@@ -83,6 +93,7 @@ class PortfolioEnvironment extends Component {
      * @memberof CubeEnvironment
      */
 	componentDidMount() {
+	
 		this.setupScene();
 		this.populateScene();
 		this.startAnimationLoop();
@@ -195,15 +206,7 @@ class PortfolioEnvironment extends Component {
      * @memberof CubeEnvironment
      */
 	setupCamera = () => {
-		this.camera = new THREE.PerspectiveCamera(
-			75, // fov = field of view
-			this.width / this.height, // aspect ratio
-			0.1, // near plane
-			1000 // far plane
-		);
-		this.camera.position.x = 0; // is used here to set some distance from a cube that is located at z = 0
-		this.camera.position.y = 0; // is used here to set some distance from a cube that is located at z = 0
-		this.camera.position.z = 40; // is used here to set some distance from a cube that is located at z = 0
+		this.camera = Builder.createCamera(this.width, this.height)
 	};
 
 	/**
@@ -231,12 +234,8 @@ class PortfolioEnvironment extends Component {
 	 * @memberof PortfolioEnvironment
 	 */
 	setupFlyControls = () => {
-		this.controls = new FlyControls(this.camera, this.mount);
-		this.controls.dragToLook = true;
-		this.controls.movementSpeed = 10;
-		this.controls.rollSpeed = 0.1;
-		this.controls.update(1);
-		this.clock = new THREE.Clock();
+		this.controls = Builder.setupFlyControls(this.camera, this.mount);
+		this.clock = Builder.setupClock();
 	};
 
 	/**
@@ -246,14 +245,8 @@ class PortfolioEnvironment extends Component {
 	 * @memberof PortfolioEnvironment
 	 */
 	setupOrbitControls = () => {
-		this.controls = new OrbitControls(this.camera, this.mount);
-		this.controls.enableKeys = true;
-		this.controls.enablePan = true;
-		this.clock = new THREE.Clock();
-		this.controls.target.set(0,0,0);
-		this.controls.minDistance = 1;
-		this.controls.maxDistance = 50;
-		this.controls.update();
+		this.controls = Builder.setupOrbitControls(this.camera, this.mount);
+		this.clock = Builder.setupClock();
 	};
 
 	/**
@@ -272,11 +265,7 @@ class PortfolioEnvironment extends Component {
      * @memberof CubeEnvironment
      */
 	setupRenderer = () => {
-		this.renderer = new THREE.WebGLRenderer({
-			antialias: true
-		});
-		this.renderer.setClearColor(new THREE.Color('rgb(0, 0, 0)'));
-		this.renderer.setSize(this.width, this.height);
+		this.renderer = Builder.createRenderer(this.width, this.height);
 	};
 
 	setupPostProcessing = () => {
@@ -557,11 +546,7 @@ class PortfolioEnvironment extends Component {
 	 * @memberof PortfolioEnvironment
 	 */
 	addGridHelper = () => {
-		const size = 100;
-		const divisions = 100;
-		// Create Gridhelper with size and divisions
-		const gridHelper = new THREE.GridHelper(size, divisions);
-		this.scene.add(gridHelper);
+		Builder.setupGridHelper(this.scene);
 	};
 
 	// Loading Logic
@@ -574,11 +559,7 @@ class PortfolioEnvironment extends Component {
 	 * @memberof PortfolioEnvironment
 	 */
 	setupLoadingManager = () => {
-		this.manager = new THREE.LoadingManager();
-		this.manager.onStart = this.loadStart;
-		this.manager.onProgress = this.loadProgressing;
-		this.manager.onLoad = this.loadFinished;
-		this.manager.onError = this.loadError;
+		this.manager = Builder.setupLoadingManager(this.loadStart, this.loadProgressing, this.loadFinished, this.loadError)
 	};
 
 	/**
@@ -618,6 +599,14 @@ class PortfolioEnvironment extends Component {
 			hasLoaded: true
 		});
 	};
+
+	loadError = () => {
+		console.log('LOAD ERROR')
+		this.setState({
+			hasLoaded: false
+		});
+	};
+
 
 	/**
      * This is the function that is running the environment.
@@ -779,6 +768,7 @@ class PortfolioEnvironment extends Component {
 				<Navbar isPlaying={this.state.soundIsPlaying} toggleMusic={this.toggleSound.bind(this)} openInfoModal={this.showInfoOverlay}/>
 				<LoadingPage show={!this.state.hasLoaded} />
 				<Overlay item={this.state.overlayItem} show={this.state.showOverlay} hide={this.hideOverlay} />
+				<Instruction show={true}/>
 				<TestEnvironmentWrapper ref={(ref) => (this.mount = ref)} />
 			</React.Fragment>
 		);
