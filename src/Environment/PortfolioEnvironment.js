@@ -76,7 +76,8 @@ class PortfolioEnvironment extends Component {
 			showOverlay: false,
 			overlayItem: null,
 			pause: false, 
-			soundIsPlaying: false
+			soundIsPlaying: false,
+			showInstructions: false
 		};
 
 		// device detection
@@ -135,10 +136,16 @@ class PortfolioEnvironment extends Component {
 	};
 
 	setupBoidManager = () => {
-		let box = new Box(2, 2, 2)
-		this.obstacles.push(box)
-		this.scene.add(box);
-		this.boidManager = new BoidManager(this.scene, 500, this.obstacles, new THREE.Vector3(0,0,0))
+		
+		const geometry = new THREE.SphereGeometry( 1, 1, 1 );
+		const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+		const sphere = new THREE.Mesh( geometry, material );
+		sphere.position.set(0, 40, 0);
+		this.scene.add( sphere );
+
+		// lure = new THREE.PointLight(0xffffff, 3, 500);
+  		// lure.position.set(0, 50, 0);
+		this.boidManager = new BoidManager(this.scene, Device.isMobile() ? 250 : 500, this.obstacles, sphere)
 		
 		this.boidManager.boids.forEach(boid => {
 			this.scene.add(boid.mesh);
@@ -596,7 +603,8 @@ class PortfolioEnvironment extends Component {
 	loadFinished = () => {
 		console.log('LOADING FINISHED')
 		this.setState({
-			hasLoaded: true
+			hasLoaded: true,
+			showInstructions: true
 		});
 	};
 
@@ -669,6 +677,7 @@ class PortfolioEnvironment extends Component {
 	addEventListeners = () => {
 		document.addEventListener("dblclick", this.onDocumentDoubleClick, false);
 		window.addEventListener('resize', this.handleWindowResize, false);
+		window.addEventListener('mousemove', this.onMoveMouse, false);
 	};
 
 	/**
@@ -678,7 +687,8 @@ class PortfolioEnvironment extends Component {
 	 */
 	removeEventListeners = () => {
 		document.removeEventListener("dblclick", this.onDocumentDoubleClick);
-		window.removeEventListener('resize', this.onWindowResize);
+		window.removeEventListener('resize', this.handleWindowResize);
+		window.removeEventListener('mousemove', this.onMoveMouse);
 	};
 
 	/**
@@ -702,6 +712,22 @@ class PortfolioEnvironment extends Component {
 		// .updateProjectionMatrix for the changes to take effect.
 		this.camera.updateProjectionMatrix();
 	};
+
+	onMoveMouse = () => {
+		this.hideInstructions()
+	}
+
+	hideInstructions = () => {
+		if(this.state.showInstructions){
+			setTimeout(() => {
+				this.setState({
+					showInstructions: false
+				})
+			}, 5000)
+
+		}
+
+	}
 
 	/**
 	 * This is calleed when the dblclick event is triggered
@@ -768,7 +794,7 @@ class PortfolioEnvironment extends Component {
 				<Navbar isPlaying={this.state.soundIsPlaying} toggleMusic={this.toggleSound.bind(this)} openInfoModal={this.showInfoOverlay}/>
 				<LoadingPage show={!this.state.hasLoaded} />
 				<Overlay item={this.state.overlayItem} show={this.state.showOverlay} hide={this.hideOverlay} />
-				<Instruction show={true}/>
+				<Instruction show={this.state.showInstructions}/>
 				<TestEnvironmentWrapper ref={(ref) => (this.mount = ref)} />
 			</React.Fragment>
 		);

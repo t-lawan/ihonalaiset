@@ -16,11 +16,7 @@ export default class Device {
 
     if (window.matchMedia("(max-width: 1023px)").matches) {
       // The viewport is less than 768 pixels wide
-      ismob = true;
-        console.log("IS MOBILE");
-      
-    } else {
-        console.log("IS NOT")
+      ismob = true; 
     }
     return ismob;
   };

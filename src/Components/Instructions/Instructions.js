@@ -16,6 +16,8 @@ const InstructionWrapper = styled.div`
   justify-content: flex-end;
   align-items: center;
   align-content: space-between;
+  transition: opacity 5s;  
+  opacity: 1; // set opacity property to 1, completely visible   
 `;
 
 const Instructions = styled.div`
@@ -32,6 +34,8 @@ const TextWrapper = styled.div`
 const InstructionText = styled.p`
   margin-bottom: 0.5rem;
   color: ${Colours.neon_green};
+  transition: opacity 5s;  
+  opacity: 1; 
   @media (max-width: ${size.tabletL}) {
     margin: 0;
     margin-bottom: 0.25rem;
@@ -39,23 +43,7 @@ const InstructionText = styled.p`
     font-size: 0.9rem !important;
   }
 `;
-const ImageWrapper = styled.div`
-  /* float: right; */
-  /* padding: 1rem; */
-  display: ${props => (props.show ? "block" : "none")};
-  /* text-align: right; */
-`;
 
-const InstructionInfoImage = styled.img`
-  width: 5%;
-`;
-
-const CloseText = styled.p`
-  text-decoration: underline;
-  :hover {
-    font-style: italic;
-  }
-`;
 class Instruction extends React.Component {
   constructor(props) {
     super(props);
@@ -72,15 +60,7 @@ class Instruction extends React.Component {
               <>
                 <InstructionText>
                   {" "}
-                  Use the arrow or WASD keys to move{" "}
-                </InstructionText>
-                <InstructionText>
-                  {" "}
                   Click and Drag to turn the view{" "}
-                </InstructionText>
-                <InstructionText>
-                  {" "}
-                  Use the Q and E keys to rotate{" "}
                 </InstructionText>
                 <InstructionText>
                   {" "}

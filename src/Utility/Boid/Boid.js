@@ -7,7 +7,7 @@ const maxSpeed = 3
 
 const numSamplesForSmoothing = 20
 
-const wanderWeight = 0.2
+const wanderWeight = 0.5
 // Steer towards the average position of nearby boids
 const cohesionWeight = 0.1
 // Steers away from nearby boids
@@ -18,7 +18,7 @@ const alignmentWeight = 1
 const visionRange = 150
 
 const origin = new THREE.Vector3()
-const boundaryRadius = 370
+const boundaryRadius = 100
 
 const clamp = function (it, min, max) {
   return Math.min(Math.max(it, min), max);
