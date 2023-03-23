@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Component } from "react";
 import styled from "styled-components";
+import { WORK_GROUP_LIST } from "../../Utility/Data/ItemList";
 import { Colours } from "../Global/Global.styles";
 
 const OverlayWrapper = styled.div`
@@ -24,20 +25,30 @@ const VideoIFrame = styled.iframe`
   height: 100vh;
 `;
 const Title = styled.h1`
-  color: ${Colours.neon_green}; ;
+  color: ${Colours.neon_green};
 `;
 const Text = styled.p`
   color: white;
 `;
 
-const DownloadLink = styled.a`
-  color: white;
+const DownloadLink = styled.p`
+    color: ${Colours.neon_green};
+    cursor: pointer;
+`
 
+const WorkGroupItemWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`
+
+const WorkGroupWrapper = styled.div`
+ color: white;
 `
 
 const TextWrapper = styled.div`
 	padding: 1rem;
-	width: 80%;
+	width: 50%;
+  align-self: flex-start;
 `
 
 const CloseOverlay = styled.p`
@@ -48,9 +59,28 @@ const CloseOverlay = styled.p`
 `;
 
 const Overlay = (props) => {
+
+  const [showCredits, setShowCredits] = useState(false);
+
   const onClick = () => {
     props.hide();
   };
+
+  const toggleShowCredits = () => {
+    setShowCredits(!showCredits);
+  }
+
+  const workGroupToggle = (
+    <WorkGroupWrapper>
+      {WORK_GROUP_LIST.map((workGroup, index) => (
+        <WorkGroupItemWrapper key={index}>
+          <Text>{workGroup.title}</Text>
+          <Text>{workGroup.name}</Text>
+
+        </WorkGroupItemWrapper>
+      ))}
+
+    </WorkGroupWrapper>  )
   return (
     <OverlayWrapper show={props.show}>
       <FlexWrapper>
@@ -73,8 +103,9 @@ const Overlay = (props) => {
         props.item.text ? (
 			<TextWrapper>
 				<Title> {props.item.title}</Title>
-          		<Text> {props.item.text}</Text>
-				<DownloadLink> Download Script </DownloadLink>
+        <Text> {props.item.text}</Text>
+				<DownloadLink onClick={() => toggleShowCredits()}> Work Group </DownloadLink>
+        {showCredits ? workGroupToggle : null}
 			</TextWrapper>
         ) : null}
       </FlexWrapper>
