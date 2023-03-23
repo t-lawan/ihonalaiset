@@ -33,7 +33,7 @@ import Instruction from '../Components/Instructions/Instructions';
 import Builder from '../Utility/Builder/Builder';
 
 
-const TestEnvironmentWrapper = styled.div`height: 100vh;`;
+const EnvironmentWrapper = styled.div`height: 100vh;`;
 
 /**
  * PortfolioEnvironment.js
@@ -795,7 +795,7 @@ class PortfolioEnvironment extends Component {
 				<LoadingPage show={!this.state.hasLoaded} />
 				<Overlay item={this.state.overlayItem} show={this.state.showOverlay} hide={this.hideOverlay} />
 				<Instruction show={this.state.showInstructions}/>
-				<TestEnvironmentWrapper ref={(ref) => (this.mount = ref)} />
+				<EnvironmentWrapper ref={(ref) => (this.mount = ref)} />
 			</React.Fragment>
 		);
 	}
