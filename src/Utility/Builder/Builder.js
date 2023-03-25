@@ -25,7 +25,7 @@ export default class Builder {
 
         camera.position.x = 0; // is used here to set some distance from a cube that is located at z = 0
 		camera.position.y = 0; // is used here to set some distance from a cube that is located at z = 0
-		camera.position.z = Device.isMobile() ? 140 : 40;
+		camera.position.z = Device.isMobile() ? 140 : 55;
         return camera;
     }
 
