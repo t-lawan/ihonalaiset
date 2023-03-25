@@ -2,27 +2,18 @@ import React, { useState, useEffect, useRef, Component } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { FlyControls } from 'three/examples/jsm/controls/FlyControls';
-
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
-import { PixelShader } from 'three/examples/jsm/shaders/PixelShader';
-
 import styled from 'styled-components';
 import { Colours } from '../Components/Global/Global.styles';
-import AstronautGLB from '../Assets/Models/Astronaut.glb';
 import Overlay from '../Components/Overlay/Overlay';
 import { ITEM_LIST } from '../Utility/Data/ItemList';
-
 import DiamondOBJ from '../Assets/Models/Diamond.obj';
-import FlowerOBJ from '../Assets/Models/Flower.obj';
 import MushroomOBJ from '../Assets/Models/Mushroom.obj';
+import SphereOBJ from '../Assets/Models/Sphere.obj';
 import SporeOBJ from '../Assets/Models/Spore.obj';
 import SwirlOBJ from '../Assets/Models/Swirl.obj';
-import { Vector3 } from 'three';
 import LoadingPage from '../Components/LoadingPage/LoadingPage';
 import Navbar from '../Components/Navbar/Navbar';
 import MUSIC from '../Assets/Audio/MUSIC.mp3'
@@ -191,10 +182,11 @@ class PortfolioEnvironment extends Component {
 		// this.addOBJModel(SwirlOBJ, new THREE.Vector3(0,0,10), ITEM_LIST.TIME);
 		// this.setupFog();
 
-		this.addOBJModel(SporeOBJ, new THREE.Vector3(-38,0,2.5), ITEM_LIST.LOREM_IPSUM); // 0,0,0 but adjusted due to file
-		this.addOBJModel(DiamondOBJ, new THREE.Vector3(5,0,0), ITEM_LIST.MONA_LISA); // 0,0,0 but adjusted due to file
-		this.addOBJModel(MushroomOBJ, new THREE.Vector3(5,0,0), ITEM_LIST.SOY_CUBA);
-		this.addOBJModel(SwirlOBJ, new THREE.Vector3(35,0,0), ITEM_LIST.TIME);
+		this.addOBJModel(SporeOBJ, new THREE.Vector3(-42,0,2.5), ITEM_LIST.SPORE); // 0,0,0 but adjusted due to file
+		this.addOBJModel(DiamondOBJ, new THREE.Vector3(-5,0,0), ITEM_LIST.DIAMOND); // 0,0,0 but adjusted due to file
+		this.addOBJModel(MushroomOBJ, new THREE.Vector3(-4,0,0), ITEM_LIST.MUSHROOM);
+		this.addOBJModel(SwirlOBJ, new THREE.Vector3(15,0,0), ITEM_LIST.SWIRL);
+		this.addOBJModel(SphereOBJ, new THREE.Vector3(35,0,0), ITEM_LIST.SPHERE);
 
 	};
 	/**
