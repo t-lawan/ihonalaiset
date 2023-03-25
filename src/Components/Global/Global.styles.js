@@ -120,7 +120,7 @@ p, li, a, span{
   padding-left: 0;
   padding-right: 0;
   padding-top: 0;
-  font-size: 1.9rem;
+  font-size: 1.5rem;
   letter-spacing: 0.03em;
   line-height: 1.05em;
 }
