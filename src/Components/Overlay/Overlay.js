@@ -20,6 +20,10 @@ const FlexWrapper = styled.div`
   height: 100vh;
 `;
 
+const OverlaySection = styled.div`
+  margin-bottom: 2rem;
+`;
+
 const VideoIFrame = styled.iframe`
   width: 100vw;
   height: 100vh;
@@ -29,27 +33,28 @@ const Title = styled.h1`
 `;
 const Text = styled.p`
   color: white;
+  margin-bottom: 0.5rem;
 `;
 
 const DownloadLink = styled.p`
-    color: ${Colours.neon_green};
-    cursor: pointer;
-`
+  color: ${Colours.neon_green};
+  cursor: pointer;
+`;
 
 const WorkGroupItemWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-`
+  grid-template-columns: 3fr 2fr; ;
+`;
 
 const WorkGroupWrapper = styled.div`
- color: white;
-`
+  color: white;
+`;
 
 const TextWrapper = styled.div`
-	padding: 1rem;
-	width: 50%;
+  padding: 1rem;
+  width: 50%;
   align-self: flex-start;
-`
+`;
 
 const CloseOverlay = styled.p`
   color: ${Colours.neon_green};
@@ -59,7 +64,6 @@ const CloseOverlay = styled.p`
 `;
 
 const Overlay = (props) => {
-
   const [showCredits, setShowCredits] = useState(false);
 
   const onClick = () => {
@@ -68,7 +72,7 @@ const Overlay = (props) => {
 
   const toggleShowCredits = () => {
     setShowCredits(!showCredits);
-  }
+  };
 
   const workGroupToggle = (
     <WorkGroupWrapper>
@@ -76,20 +80,17 @@ const Overlay = (props) => {
         <WorkGroupItemWrapper key={index}>
           <Text>{workGroup.title}</Text>
           <Text>{workGroup.name}</Text>
-
         </WorkGroupItemWrapper>
       ))}
-
-    </WorkGroupWrapper>  )
+    </WorkGroupWrapper>
+  );
   return (
     <OverlayWrapper show={props.show}>
       <FlexWrapper>
         <CloseOverlay onClick={() => onClick()}> BACK </CloseOverlay>
         {/*  Render Video element */}
 
-        {props.item &&
-        props.item.type === "VIDEO" &&
-        props.item.video_url ? (
+        {props.item && props.item.type === "VIDEO" && props.item.video_url ? (
           <VideoIFrame
             src={props.item.video_url}
             title={props.item.title}
@@ -98,15 +99,19 @@ const Overlay = (props) => {
           />
         ) : null}
 
-        {props.item &&
-        props.item.type === "TEXT" &&
-        props.item.text ? (
-			<TextWrapper>
-				<Title> {props.item.title}</Title>
-        <Text> {props.item.text}</Text>
-				<DownloadLink onClick={() => toggleShowCredits()}> Work Group </DownloadLink>
-        {showCredits ? workGroupToggle : null}
-			</TextWrapper>
+        {props.item && props.item.type === "TEXT" && props.item.text ? (
+          <TextWrapper>
+            <OverlaySection>
+              <Title> {props.item.title}</Title>
+              <Text> {props.item.text}</Text>
+            </OverlaySection>
+
+            <DownloadLink onClick={() => toggleShowCredits()}>
+              {" "}
+              Work Group{" "}
+            </DownloadLink>
+            {showCredits ? workGroupToggle : null}
+          </TextWrapper>
         ) : null}
       </FlexWrapper>
     </OverlayWrapper>
