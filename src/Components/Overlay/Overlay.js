@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, Component } from "react";
 import styled from "styled-components";
 import { WORK_GROUP_LIST } from "../../Utility/Data/ItemList";
-import { Colours } from "../Global/Global.styles";
+import { Colours, size } from "../Global/Global.styles";
 
 const OverlayWrapper = styled.div`
   position: absolute;
@@ -54,6 +54,9 @@ const TextWrapper = styled.div`
   padding: 1rem;
   width: 50%;
   align-self: flex-start;
+  @media (max-width: ${size.tablet}) {
+    width: 100%;
+  }
 `;
 
 const CloseOverlay = styled.p`
