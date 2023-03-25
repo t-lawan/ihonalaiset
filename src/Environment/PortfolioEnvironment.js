@@ -120,7 +120,7 @@ class PortfolioEnvironment extends Component {
 		this.setupLoadingManager();
 		this.setupRayCaster()
 		this.setupMouse()
-		this.setupAudio();
+		// this.setupAudio();
 		this.setupBoidManager()
 
 		this.mount.appendChild(this.renderer.domElement); // mount using React ref
