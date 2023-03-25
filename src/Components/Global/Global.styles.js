@@ -1,28 +1,27 @@
 import styled, { createGlobalStyle } from "styled-components";
-import NewEdge6666 from '../../Assets/Fonts/NewEdge6666-LightRounded.woff2'
+import NewEdge6666 from "../../Assets/Fonts/NewEdge6666-LightRounded.woff2";
 
 export const size = {
-    mobileS: "320px",
-    mobileM: "420px",
-    mobileL: "520px",
-    mobileSL: "568px",
-    mobileXL: "736px",
-    tablet: "768px",
-    tabletL: "1023px",
-    laptop: "1024px",
-    laptopM: "1124px",
-    laptopL: "1400px",
-    desktopS: "1600px",
-    desktopM: "1900px",
-    desktop: "2260px"
-  };
+  mobileS: "320px",
+  mobileM: "420px",
+  mobileL: "520px",
+  mobileSL: "568px",
+  mobileXL: "736px",
+  tablet: "768px",
+  tabletL: "1023px",
+  laptop: "1024px",
+  laptopM: "1124px",
+  laptopL: "1400px",
+  desktopS: "1600px",
+  desktopM: "1900px",
+  desktop: "2260px",
+};
 
-
-  export const Colours = {
-      dark_purple : 'rgb(54, 54, 82)',
-      light_purple : 'rgb(240, 235, 255)',
-      neon_green: '#83ff0c'
-  }
+export const Colours = {
+  dark_purple: "rgb(54, 54, 82)",
+  light_purple: "rgb(240, 235, 255)",
+  neon_green: "#83ff0c",
+};
 
 export const GlobalStyle = createGlobalStyle`
    @font-face {
@@ -37,7 +36,7 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-box-sizing: border-box;
 
   }
-    }
+    
 
 html, body {
   margin: 0;
@@ -73,6 +72,10 @@ h1,h2,h3,h4,h5,h6 {
   margin-bottom: 1.45rem;
   font-size: 2.5rem;
   line-height: 1.1;
+  @media (max-width: ${size.tabletL}) {
+
+font-size: 2rem;
+}
 }
 h2 {
   margin-bottom: 1.45rem;
@@ -123,14 +126,10 @@ p, li, a, span{
   font-size: 1.5rem;
   letter-spacing: 0.03em;
   line-height: 1.05em;
+  @media (max-width: ${size.tabletL}) {
+
+    font-size: 1rem;
+  }
 }
-
-
-
-
-
-
-
-
 
 `;
