@@ -31,7 +31,7 @@ const Navbar = (props) => {
     <NavbarWrapper>
       <NavbarLinksWrapper>
         <NavbarLink  onClick={() => props.openInfoModal()}> INFO </NavbarLink>
-        <NavbarLink onClick={() => props.toggleMusic()}> {props.isPlaying ? 'Ø' : 'O'} </NavbarLink>
+        {/* <NavbarLink onClick={() => props.toggleMusic()}> {props.isPlaying ? 'Ø' : 'O'} </NavbarLink> */}
       </NavbarLinksWrapper>
     </NavbarWrapper>
   );
