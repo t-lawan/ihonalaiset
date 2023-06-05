@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, Component } from "react";
 import styled from "styled-components";
 import { WORK_GROUP_LIST } from "../../Utility/Data/ItemList";
 import { Colours, size } from "../Global/Global.styles";
+import ReactPlayer from 'react-player'
 
 const OverlayWrapper = styled.div`
   position: absolute;
@@ -54,8 +55,12 @@ const TextWrapper = styled.div`
   padding: 1rem;
   width: 50%;
   align-self: flex-start;
+  position: absolute;
+  top: 20%;
   @media (max-width: ${size.tablet}) {
     width: 100%;
+    top: 10%;
+
   }
 `;
 
@@ -67,11 +72,22 @@ const CloseOverlay = styled.p`
 `;
 
 const Overlay = (props) => {
+  const [isPlaying, setIsPlaying] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
+  let videoPlayer = useRef(null); 
 
   const onClick = () => {
+    pause()
     props.hide();
   };
+
+  const onPlay = () => {
+    setIsPlaying(true);
+  }
+
+  const pause = () => {
+    setIsPlaying(false);
+  }
 
   const toggleShowCredits = () => {
     setShowCredits(!showCredits);
@@ -94,12 +110,16 @@ const Overlay = (props) => {
         {/*  Render Video element */}
 
         {props.item && props.item.type === "VIDEO" && props.item.video_url ? (
-          <VideoIFrame
-            src={props.item.video_url}
-            title={props.item.title}
-            frameBorder="0"
-            allowFullScreen={true}
-          />
+          // <VideoIFrame
+          //   src={props.item.video_url}
+          //   title={props.item.title}
+          //   frameBorder="0"
+          //   allowFullScreen={true}
+            
+          // />
+
+          <ReactPlayer playing={isPlaying} onPlay={onPlay} url={props.item.video_url} controls={true} stopOnUnmount={true} ref={videoPlayer}/>
+          
         ) : null}
 
         {props.item && props.item.type === "TEXT" && props.item.text ? (
@@ -109,7 +129,7 @@ const Overlay = (props) => {
               <Text> {props.item.text}</Text>
             </OverlaySection>
 
-            <DownloadLink onClick={() => toggleShowCredits()}>
+            <DownloadLink ref={videoPlayer} onClick={() => toggleShowCredits()}>
               {" "}
               Work Group{" "}
             </DownloadLink>

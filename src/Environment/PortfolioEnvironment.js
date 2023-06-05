@@ -8,7 +8,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import styled from 'styled-components';
 import { Colours } from '../Components/Global/Global.styles';
 import Overlay from '../Components/Overlay/Overlay';
-import { ITEM_LIST } from '../Utility/Data/ItemList';
+import { ITEM_LIST, OverlayItemMap, transformItemList } from '../Utility/Data/ItemList';
 import DiamondOBJ from '../Assets/Models/Diamond.obj';
 import MushroomOBJ from '../Assets/Models/Mushroom.obj';
 import SphereOBJ from '../Assets/Models/Sphere.obj';
@@ -22,6 +22,8 @@ import { BoidHelper, Box } from '../Utility/BoidHelper/BoidHelper';
 import Device from '../Utility/Device';
 import Instruction from '../Components/Instructions/Instructions';
 import Builder from '../Utility/Builder/Builder';
+import { connect } from 'react-redux';
+import { setItemList } from '../Store/action';
 
 
 const EnvironmentWrapper = styled.div`height: 100vh;`;
@@ -77,15 +79,13 @@ class PortfolioEnvironment extends Component {
 		}
 	}
 
-
-
 	/**
      * This is a React Lifecycle method.
      *
      * @memberof CubeEnvironment
      */
 	componentDidMount() {
-	
+		// this.loadStore();
 		this.setupScene();
 		this.populateScene();
 		this.startAnimationLoop();
@@ -102,6 +102,11 @@ class PortfolioEnvironment extends Component {
 		window.cancelAnimationFrame(this.animationID);
 		this.controls.dispose();
 	}
+
+	// loadStore = () => {
+	// 	let itemList = transformItemList(ITEM_LIST);
+	// 	this.props.setItemList(itemList)
+	// }
 
 	/**
      * This function setup the THREE.Scene
@@ -182,11 +187,11 @@ class PortfolioEnvironment extends Component {
 		// this.addOBJModel(SwirlOBJ, new THREE.Vector3(0,0,10), ITEM_LIST.TIME);
 		// this.setupFog();
 
-		this.addOBJModel(SporeOBJ, new THREE.Vector3(-42,0,2.5), ITEM_LIST.SPORE); // 0,0,0 but adjusted due to file
-		this.addOBJModel(DiamondOBJ, new THREE.Vector3(-5,0,0), ITEM_LIST.DIAMOND); // 0,0,0 but adjusted due to file
-		this.addOBJModel(MushroomOBJ, new THREE.Vector3(-4,0,0), ITEM_LIST.MUSHROOM);
-		this.addOBJModel(SwirlOBJ, new THREE.Vector3(15,0,0), ITEM_LIST.SWIRL);
-		this.addOBJModel(SphereOBJ, new THREE.Vector3(35,0,0), ITEM_LIST.SPHERE);
+		this.addOBJModel(SporeOBJ, new THREE.Vector3(-42,0,2.5), this.props.item_list.find(item => item.title === OverlayItemMap.SPORE.title)); // 0,0,0 but adjusted due to file
+		this.addOBJModel(DiamondOBJ, new THREE.Vector3(-5,0,0), this.props.item_list.find(item => item.title === OverlayItemMap.DIAMOND.title)); // 0,0,0 but adjusted due to file
+		this.addOBJModel(MushroomOBJ, new THREE.Vector3(-4,0,0), this.props.item_list.find(item => item.title === OverlayItemMap.MUSHROOM.title));
+		this.addOBJModel(SwirlOBJ, new THREE.Vector3(15,0,0), this.props.item_list.find(item => item.title === OverlayItemMap.SWIRL.title));
+		this.addOBJModel(SphereOBJ, new THREE.Vector3(35,0,0), this.props.item_list.find(item => item.title === OverlayItemMap.SPHERE.title));
 
 	};
 	/**
@@ -325,9 +330,9 @@ class PortfolioEnvironment extends Component {
 	 *
 	 * @memberof PortfolioEnvironment
 	 */
-	setMouse = (event) => {
-		this.mouse.x = event.clientX / this.mount.clientWidth * 2 - 1;
-		this.mouse.y = -(event.clientY / this.mount.clientHeight) * 2 + 1;
+	setMouse = (clientX, clientY) => {
+		this.mouse.x = clientX / this.mount.clientWidth * 2 - 1;
+		this.mouse.y = -(clientY / this.mount.clientHeight) * 2 + 1;
 	};
 
 	/**
@@ -449,6 +454,7 @@ class PortfolioEnvironment extends Component {
 
 			// Assign project data
 			model.userData.project = project;
+
 			model.traverse((object) => {
 				object.position.set(position.x, position.y, position.z);
 				object.userData.project = project;
@@ -668,6 +674,7 @@ class PortfolioEnvironment extends Component {
      */
 	addEventListeners = () => {
 		document.addEventListener("dblclick", this.onDocumentDoubleClick, false);
+		document.addEventListener("touchstart", this.onTouchStart, false);
 		window.addEventListener('resize', this.handleWindowResize, false);
 		window.addEventListener('mousemove', this.onMoveMouse, false);
 	};
@@ -679,9 +686,12 @@ class PortfolioEnvironment extends Component {
 	 */
 	removeEventListeners = () => {
 		document.removeEventListener("dblclick", this.onDocumentDoubleClick);
+		document.removeEventListener("touchstart", this.onTouchStart);
 		window.removeEventListener('resize', this.handleWindowResize);
 		window.removeEventListener('mousemove', this.onMoveMouse);
 	};
+
+	
 
 	/**
 	 * This is calleed when the resize event is triggered
@@ -718,8 +728,9 @@ class PortfolioEnvironment extends Component {
 			}, 5000)
 
 		}
-
 	}
+
+
 
 	/**
 	 * This is calleed when the dblclick event is triggered
@@ -727,9 +738,14 @@ class PortfolioEnvironment extends Component {
 	 * @memberof PortfolioEnvironment
 	 */
 	onDocumentDoubleClick = (event) => {
-		// Check if environment is not in pause state
+		this.handleSelectingObject(event.clientX, event.clientY);
+
+	};
+
+	handleSelectingObject = (clientX, clientY) => {
 		if (!this.state.pause) {
-			this.setMouse(event);
+			
+			this.setMouse(clientX, clientY);
 
 			// Update the ray with a new origin and direction.
 			this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -737,18 +753,67 @@ class PortfolioEnvironment extends Component {
 			//Checks all intersection between the ray and the objects with or without the descendants.
 			// Intersections are returned sorted by distance, closest first.
 			let intersects = this.raycaster.intersectObjects(this.clickableObjects);
-			console.log('clickableObjects', this.clickableObjects);
+
 			if (intersects.length > 0) {
 				let mesh = intersects[0];
 				console.log(mesh.object);
+
+				if(mesh.object.userData.project.isOn) {
 				// Set the overlay and project
 				this.setState({
 					showOverlay: true,
 					overlayItem: mesh.object.userData.project
 				});
+
+				// SET PROJECT TO TRUE IN
+				this.updateItemList(mesh.object.userData.project);
+				this.updateLightForAllModels()
+				}
+
 			}
 		}
-	};
+	}
+
+	updateItemList = (item) => {
+		if(item.isOn) {
+			let itemList = this.props.item_list;
+			let updatedItemIndex = itemList.findIndex(itemObj =>  item.title === itemObj.title)
+			itemList[updatedItemIndex].hasWatched = true;
+			itemList[updatedItemIndex].isOn = false;
+	
+			let nextItemIndex = updatedItemIndex + 1;
+	
+			if(nextItemIndex >= itemList.length) {
+				nextItemIndex = 0;
+	
+			}
+	
+			itemList[nextItemIndex].isOn = true;
+	
+	
+			this.props.setItemList(itemList)
+		}
+
+	}
+
+	updateLightForAllModels = () => {
+		this.clickableObjects.forEach((obj) => {
+			let item = this.props.item_list.find((i) => obj.userData.project.title === i.title)
+			console.log("OBJ", obj)
+
+			if(item.isOn){
+
+				obj.children[0].material.color = new THREE.Color(Colours.neon_green);
+			} else {
+				obj.children[0].material.color = new THREE.Color("white");
+
+			}
+		})
+	}
+
+	onTouchStart = (event) => {
+		this.handleSelectingObject(event.targetTouches[0].clientX, event.targetTouches[0].clientY);
+	}
 
 	showInfoOverlay = () => {
 		this.setState({
@@ -793,4 +858,20 @@ class PortfolioEnvironment extends Component {
 	}
 }
 
-export default PortfolioEnvironment;
+const mapStateToProps = state => {
+	return {
+		item_list: state.item_list
+	};
+  };
+  
+  const mapDispatchToProps = dispatch => {
+	return {
+		setItemList: itemList => dispatch(setItemList(itemList))
+	};
+  };
+
+
+  export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+  )(PortfolioEnvironment);

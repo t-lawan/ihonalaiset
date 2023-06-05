@@ -30,7 +30,7 @@ export default class BoidManager {
       randomY = Math.random() * 250 - 125
       randomZ = Math.random() * 250 - 125
       colour = null // will use default color in getBoid
-      followTarget = false
+      // followTarget = false
       quaternion = null
 
       // reference boid
@@ -39,7 +39,7 @@ export default class BoidManager {
         randomY = 0
         randomZ = 0
         colour = 0xe56289
-        // followTarget = true
+        followTarget = true
         quaternion = null
       }
 
