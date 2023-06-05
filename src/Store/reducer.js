@@ -19,7 +19,6 @@ export const reducer = (state = initalState, action) => {
 
         };
       case SET_ITEM_LIST:
-        console.log("ACTION",action)
         return {
           ...state,
           item_list: action.item_list,
