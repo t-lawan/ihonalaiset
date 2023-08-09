@@ -23,7 +23,7 @@ import Device from '../Utility/Device';
 import Instruction from '../Components/Instructions/Instructions';
 import Builder from '../Utility/Builder/Builder';
 import { connect } from 'react-redux';
-import { setItemList } from '../Store/action';
+import { hasLoaded, setItemList } from '../Store/action';
 
 
 const EnvironmentWrapper = styled.div`height: 100vh;`;
@@ -416,7 +416,6 @@ class PortfolioEnvironment extends Component {
 		const loader = new GLTFLoader(this.manager);
 		// Instatiate new Object3D for the model
 		let model = new THREE.Object3D();
-		// console.log("OBJ", object)
 
 		// Load the model using call back
 		loader.load(object, (gltf) => {
@@ -441,7 +440,6 @@ class PortfolioEnvironment extends Component {
 		const loader = new OBJLoader(this.manager);
 		// Instatiate new Object3D for the model
 		let model = new THREE.Object3D();
-		// console.log("OBJ", object)
 
 		// Load the model using call back
 		loader.load(object, (obj) => {
@@ -599,7 +597,7 @@ class PortfolioEnvironment extends Component {
 	 * @memberof PortfolioEnvironment
 	 */
 	loadFinished = () => {
-		console.log('LOADING FINISHED')
+		this.props.hasLoaded();
 		this.setState({
 			hasLoaded: true,
 			showInstructions: true
@@ -607,7 +605,6 @@ class PortfolioEnvironment extends Component {
 	};
 
 	loadError = () => {
-		console.log('LOAD ERROR')
 		this.setState({
 			hasLoaded: false
 		});
@@ -756,9 +753,8 @@ class PortfolioEnvironment extends Component {
 
 			if (intersects.length > 0) {
 				let mesh = intersects[0];
-				console.log(mesh.object);
 
-				if(mesh.object.userData.project.isOn) {
+				if(this.isProjectOn(mesh.object.userData.project)) {
 				// Set the overlay and project
 				this.setState({
 					showOverlay: true,
@@ -774,8 +770,20 @@ class PortfolioEnvironment extends Component {
 		}
 	}
 
+	isProjectOn = (project) => {
+		let proj = this.props.item_list.find((item) => {
+			return item.title === project.title;
+		});
+
+		if(!proj) {
+			return false
+		}
+
+		return proj.isOn;
+	}
+
 	updateItemList = (item) => {
-		if(item.isOn) {
+		// if(item.isOn) {
 			let itemList = this.props.item_list;
 			let updatedItemIndex = itemList.findIndex(itemObj =>  item.title === itemObj.title)
 			itemList[updatedItemIndex].hasWatched = true;
@@ -785,21 +793,17 @@ class PortfolioEnvironment extends Component {
 	
 			if(nextItemIndex >= itemList.length) {
 				nextItemIndex = 0;
-	
 			}
 	
 			itemList[nextItemIndex].isOn = true;
 	
-	
 			this.props.setItemList(itemList)
-		}
-
+		// }
 	}
 
 	updateLightForAllModels = () => {
 		this.clickableObjects.forEach((obj) => {
 			let item = this.props.item_list.find((i) => obj.userData.project.title === i.title)
-			console.log("OBJ", obj)
 
 			if(item.isOn){
 
@@ -866,7 +870,8 @@ const mapStateToProps = state => {
   
   const mapDispatchToProps = dispatch => {
 	return {
-		setItemList: itemList => dispatch(setItemList(itemList))
+		setItemList: itemList => dispatch(setItemList(itemList)),
+		hasLoaded: () => dispatch(hasLoaded())
 	};
   };
 

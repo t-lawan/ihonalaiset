@@ -5,6 +5,7 @@ import PortfolioEnvironment from "../../Environment/PortfolioEnvironment";
 import { connect } from "react-redux";
 import { setItemList } from "../../Store/action";
 import { ITEM_LIST, transformItemList } from "../../Utility/Data/ItemList";
+import StorageManager from "../../Utility/StorageManager/StorageManager";
 
 class Home extends Component {
 
@@ -12,8 +13,8 @@ class Home extends Component {
     this.loadStore()
   }
 	loadStore = () => {
-		let itemList = transformItemList(ITEM_LIST);
-		this.props.setItemList(itemList)
+    let storage = StorageManager.get();
+		this.props.setItemList(storage ? storage.item_list : transformItemList(ITEM_LIST))
 	}
   render(){
     return (
