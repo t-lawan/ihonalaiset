@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, Component } from "react";
 import styled from "styled-components";
 import { WORK_GROUP_LIST } from "../../Utility/Data/ItemList";
 import { Colours, size } from "../Global/Global.styles";
-import ReactPlayer from 'react-player'
+import ReactPlayer from "react-player";
 
 const OverlayWrapper = styled.div`
   position: absolute;
@@ -44,7 +44,7 @@ const DownloadLink = styled.p`
 
 const WorkGroupItemWrapper = styled.div`
   display: grid;
-  grid-template-columns: 3fr 2fr; ;
+  grid-template-columns: 3fr 2fr;
 `;
 
 const WorkGroupWrapper = styled.div`
@@ -60,7 +60,6 @@ const TextWrapper = styled.div`
   @media (max-width: ${size.tablet}) {
     width: 100%;
     top: 10%;
-
   }
 `;
 
@@ -74,20 +73,20 @@ const CloseOverlay = styled.p`
 const Overlay = (props) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
-  let videoPlayer = useRef(null); 
+  let videoPlayer = useRef(null);
 
   const onClick = () => {
-    pause()
+    pause();
     props.hide();
   };
 
   const onPlay = () => {
     setIsPlaying(true);
-  }
+  };
 
   const pause = () => {
     setIsPlaying(false);
-  }
+  };
 
   const toggleShowCredits = () => {
     setShowCredits(!showCredits);
@@ -115,11 +114,17 @@ const Overlay = (props) => {
           //   title={props.item.title}
           //   frameBorder="0"
           //   allowFullScreen={true}
-            
+
           // />
 
-          <ReactPlayer playing={isPlaying} onPlay={onPlay} url={props.item.video_url} controls={true} stopOnUnmount={true} ref={videoPlayer}/>
-          
+          <ReactPlayer
+            playing={isPlaying}
+            onPlay={onPlay}
+            url={props.item.video_url}
+            controls={true}
+            stopOnUnmount={true}
+            ref={videoPlayer}
+          />
         ) : null}
 
         {props.item && props.item.type === "TEXT" && props.item.text ? (
@@ -129,11 +134,29 @@ const Overlay = (props) => {
               <Text> {props.item.text}</Text>
             </OverlaySection>
 
-            <DownloadLink ref={videoPlayer} onClick={() => toggleShowCredits()}>
-              {" "}
-              Work Group{" "}
-            </DownloadLink>
-            {showCredits ? workGroupToggle : null}
+            <OverlaySection>
+              <Title ref={videoPlayer} onClick={() => toggleShowCredits()}>
+                {" "}
+                Workgroup{" "}
+              </Title>
+              {showCredits ? (
+                <>
+                  <Text> Film by Vilja Achté</Text>
+                  <Text> Based on a story by Kanerva Lehtonen</Text>
+                  <Text>
+                    {" "}
+                    Screenwriting by Vilja Achté and Kanerva Lehtonen
+                  </Text>
+                  <Text> Narration by Inka Achté</Text>
+                  <Text> Sound design and composition by Lauri Achté</Text>
+                  <Text> Translation by Maija Timonen</Text>
+                  <Text> Website by Thomas Lawanson</Text>
+                  <Text> Logo design by Hanna Valle</Text>
+                  <Text> Thanks to Diyala Muir</Text>
+                  <Text> With the support of SKR, Grafia and Taike</Text>
+                </>
+              ) : null}
+            </OverlaySection>
           </TextWrapper>
         ) : null}
       </FlexWrapper>
