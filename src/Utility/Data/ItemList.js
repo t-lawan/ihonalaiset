@@ -42,7 +42,7 @@ export const ITEM_LIST = {
 	MUSHROOM: new OverlayItem(OverlayItemMap.MUSHROOM.title,OVERLAY_ITEM_TYPE.VIDEO, 3,  "https://player.vimeo.com/video/805153167", null, false), // 
 	SWIRL: new OverlayItem(OverlayItemMap.SWIRL.title,OVERLAY_ITEM_TYPE.VIDEO, 4,  "https://player.vimeo.com/video/805154658", null, false), // 
 	SPHERE: new OverlayItem(OverlayItemMap.SPHERE.title,OVERLAY_ITEM_TYPE.VIDEO, 5, "https://player.vimeo.com/video/805155573", null, false), // 
-	ABOUT: new OverlayItem("About", OVERLAY_ITEM_TYPE.TEXT, null, null, "Ihonalaiset is an animated short film that discusses the questions of self-ownership and ecological relationships. The story revolves around a woman, whose everyday life gets interrupted one morning as she notices that something unexpected is growing out of her ear. This leads to a series of events that invites the spectator to contemplate on questions of consent as well as the division of self and other and human and nature. The film is created by Vilja Achté and is based on Kanerva Lehtonen’s short story.", false), // 	
+	ABOUT: new OverlayItem("About", OVERLAY_ITEM_TYPE.TEXT, null, null, "Subskinians / Ihonalaiset (2023) is a web-based short film that discusses the questions of self-ownership and ecological relationships. The story revolves around a protagonist, who one day notices that something unexpected is growing out of her ear. This leads to a series of events that invites the spectator to contemplate on questions of consent as well as the division of self and other and human and nature. The film is based on Kanerva Lehtonen’s short story of the same name, written in 2015.", false), // 	
 }
 
 
