@@ -51,8 +51,34 @@ const CloseOverlay = styled.p`
   top: 2.5%;
 `;
 
+const VideoPlayerFallbackWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  top: 20%;
+  background: transparent;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const StyledVideoPlayer = styled(ReactPlayer)`
+  width: 100%;
+  height: 100%;
+`;
+
+const StyledVideoPlayerWrapper = styled.div`
+  width: 100vw;
+  height: 100vh;
+`;
+
+const LoadingText = styled.p`
+  color: ${Colours.neon_green};
+`;
+
 const Overlay = (props) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
   const [showCredits, setShowCredits] = useState(false);
   let videoPlayer = useRef(null);
 
@@ -63,6 +89,10 @@ const Overlay = (props) => {
 
   const onPlay = () => {
     setIsPlaying(true);
+  };
+
+  const onReady = (x) => {
+    setIsVideoReady(true);
   };
 
   const pause = () => {
@@ -80,16 +110,26 @@ const Overlay = (props) => {
         {/*  Render Video element */}
 
         {props.item && props.item.type === "VIDEO" && props.item.video_url ? (
-          <ReactPlayer
-            playing={isPlaying}
-            onPlay={onPlay}
-            url={props.item.video_url}
-            controls={true}
-            stopOnUnmount={true}
-            ref={videoPlayer}
-            width={`100%`}
-            height={`100%`}
-          />
+          <>
+            <StyledVideoPlayer
+              playing={isPlaying}
+              onPlay={onPlay}
+              onReady={onReady}
+              url={props.item.video_url}
+              controls={true}
+              stopOnUnmount={true}
+              ref={videoPlayer}
+              pip={false}
+              width={`100%`}
+              height={`100%`}
+              // wrapper={StyledVideoPlayerWrapper}
+            />
+            {!isVideoReady ? (
+              <VideoPlayerFallbackWrapper>
+                <LoadingText> Loading..</LoadingText>{" "}
+              </VideoPlayerFallbackWrapper>
+            ) : null}
+          </>
         ) : null}
 
         {props.item && props.item.type === "TEXT" && props.item.text ? (
@@ -117,7 +157,11 @@ const Overlay = (props) => {
                   <Text> Translation by Maija Timonen</Text>
                   <Text> Website by Thomas Lawanson</Text>
                   <Text> Logo design by Hanna Valle</Text>
-                  <Text> With the support of The Finnish Cultural Foundation, Grafia and The Arts Promotion Centre Finland</Text>
+                  <Text>
+                    {" "}
+                    With the support of The Finnish Cultural Foundation, Grafia
+                    and The Arts Promotion Centre Finland
+                  </Text>
                 </>
               ) : null}
             </OverlaySection>
