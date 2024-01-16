@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, Component } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import { WORK_GROUP_LIST } from "../../Utility/Data/ItemList";
 import { Colours, size } from "../Global/Global.styles";
 import ReactPlayer from "react-player";
 
@@ -25,30 +24,12 @@ const OverlaySection = styled.div`
   margin-bottom: 2rem;
 `;
 
-const VideoIFrame = styled.iframe`
-  width: 100vw;
-  height: 100vh;
-`;
 const Title = styled.h1`
   color: ${Colours.neon_green};
 `;
 const Text = styled.p`
   color: white;
   margin-bottom: 0.5rem;
-`;
-
-const DownloadLink = styled.p`
-  color: ${Colours.neon_green};
-  cursor: pointer;
-`;
-
-const WorkGroupItemWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-`;
-
-const WorkGroupWrapper = styled.div`
-  color: white;
 `;
 
 const TextWrapper = styled.div`
@@ -59,7 +40,7 @@ const TextWrapper = styled.div`
   top: 20%;
   @media (max-width: ${size.tablet}) {
     width: 100%;
-    top: 10%;
+    top: 5%;
   }
 `;
 
@@ -92,16 +73,6 @@ const Overlay = (props) => {
     setShowCredits(!showCredits);
   };
 
-  const workGroupToggle = (
-    <WorkGroupWrapper>
-      {WORK_GROUP_LIST.map((workGroup, index) => (
-        <WorkGroupItemWrapper key={index}>
-          <Text>{workGroup.title}</Text>
-          <Text>{workGroup.name}</Text>
-        </WorkGroupItemWrapper>
-      ))}
-    </WorkGroupWrapper>
-  );
   return (
     <OverlayWrapper show={props.show}>
       <FlexWrapper>
@@ -109,14 +80,6 @@ const Overlay = (props) => {
         {/*  Render Video element */}
 
         {props.item && props.item.type === "VIDEO" && props.item.video_url ? (
-          // <VideoIFrame
-          //   src={props.item.video_url}
-          //   title={props.item.title}
-          //   frameBorder="0"
-          //   allowFullScreen={true}
-
-          // />
-
           <ReactPlayer
             playing={isPlaying}
             onPlay={onPlay}
@@ -124,6 +87,8 @@ const Overlay = (props) => {
             controls={true}
             stopOnUnmount={true}
             ref={videoPlayer}
+            width={`100%`}
+            height={`100%`}
           />
         ) : null}
 
@@ -147,13 +112,12 @@ const Overlay = (props) => {
                     {" "}
                     Screenwriting by Vilja Achté and Kanerva Lehtonen
                   </Text>
-                  <Text> Narration by Inka Achté</Text>
                   <Text> Sound design and composition by Lauri Achté</Text>
+                  <Text> Narration by Inka Achté</Text>
                   <Text> Translation by Maija Timonen</Text>
                   <Text> Website by Thomas Lawanson</Text>
                   <Text> Logo design by Hanna Valle</Text>
-                  <Text> Thanks to Diyala Muir</Text>
-                  <Text> With the support of SKR, Grafia and Taike</Text>
+                  <Text> With the support of The Finnish Cultural Foundation, Grafia and The Arts Promotion Centre Finland</Text>
                 </>
               ) : null}
             </OverlaySection>
