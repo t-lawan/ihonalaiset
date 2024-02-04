@@ -854,7 +854,7 @@ class PortfolioEnvironment extends Component {
 			<React.Fragment>
 				<Navbar isPlaying={this.state.soundIsPlaying} toggleMusic={this.toggleSound.bind(this)} openInfoModal={this.showInfoOverlay}/>
 				<LoadingPage show={!this.state.hasLoaded} />
-				<Overlay item={this.state.overlayItem} show={this.state.showOverlay} hide={this.hideOverlay} />
+				{this.state.showOverlay ? <Overlay item={this.state.overlayItem} show={this.state.showOverlay} hide={this.hideOverlay} /> : null}
 				<Instruction show={this.state.showInstructions}/>
 				<EnvironmentWrapper ref={(ref) => (this.mount = ref)} />
 			</React.Fragment>

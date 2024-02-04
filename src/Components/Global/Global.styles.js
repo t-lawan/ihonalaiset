@@ -112,6 +112,31 @@ img {
   padding-top: 0;
   margin-bottom: 1.45rem;
 }
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+  }
+
+  @keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+  }
+
 p, li, a, span{
     color: ${Colours.dark_purple};
 

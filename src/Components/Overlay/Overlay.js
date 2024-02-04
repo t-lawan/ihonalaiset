@@ -1,14 +1,27 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Colours, size } from "../Global/Global.styles";
-import ReactPlayer from "react-player";
+import VideoPlayer from "../VideoPlayer/VideoPlayer";
+import AboutText from "../AboutText/AboutText";
+
+const CloseOverlay = styled.p`
+  color: ${Colours.neon_green};
+  cursor: pointer;
+  position: absolute;
+  top: 2.5%;
+  z-index: 100;
+  animation: ${props => (props.isMouseMoving ? "fade-in 0.5s forwards" : "fade-out 1s forwards")}  ;
+`;
+
+
 
 const OverlayWrapper = styled.div`
   position: absolute;
   width: 100vw;
   height: 100vh;
   background: black;
-  display: ${(props) => (props.show ? "block" : "none")};
+  z-index: 100;
+
 `;
 
 const FlexWrapper = styled.div`
@@ -44,128 +57,46 @@ const TextWrapper = styled.div`
   }
 `;
 
-const CloseOverlay = styled.p`
-  color: ${Colours.neon_green};
-  cursor: pointer;
-  position: absolute;
-  top: 2.5%;
-`;
 
-const VideoPlayerFallbackWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  top: 20%;
-  background: transparent;
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
-const StyledVideoPlayer = styled(ReactPlayer)`
-  width: 100%;
-  height: 100%;
-`;
 
-const StyledVideoPlayerWrapper = styled.div`
-  width: 100vw;
-  height: 100vh;
-`;
 
-const LoadingText = styled.p`
-  color: ${Colours.neon_green};
-`;
 
 const Overlay = (props) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isVideoReady, setIsVideoReady] = useState(false);
-  const [showCredits, setShowCredits] = useState(false);
-  let videoPlayer = useRef(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isMouseMoving, setIsMouseMoving] = useState(true);
+  let timeoutId = null;
+  useEffect(() => {
+    console.log("CLOSED")
+    setIsVisible(true);
+  }, []);
 
+  const handleMouseEnter = () => {
+    setIsMouseMoving(true);
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => {
+      setIsMouseMoving(false);
+    }, 3000); // 10 seconds
+  };
   const onClick = () => {
-    pause();
+    setIsVisible(false)
+    // pause();
     props.hide();
   };
-
-  const onPlay = () => {
-    setIsPlaying(true);
-  };
-
-  const onReady = (x) => {
-    setIsVideoReady(true);
-  };
-
-  const pause = () => {
-    setIsPlaying(false);
-  };
-
-  const toggleShowCredits = () => {
-    setShowCredits(!showCredits);
-  };
-
   return (
     <OverlayWrapper show={props.show}>
       <FlexWrapper>
-        <CloseOverlay onClick={() => onClick()}> BACK </CloseOverlay>
+        <CloseOverlay isMouseMoving={isMouseMoving} onClick={() => onClick()}> BACK </CloseOverlay>
         {/*  Render Video element */}
 
         {props.item && props.item.type === "VIDEO" && props.item.video_url ? (
           <>
-            <StyledVideoPlayer
-              playing={isPlaying}
-              onPlay={onPlay}
-              onReady={onReady}
-              url={props.item.video_url}
-              controls={true}
-              stopOnUnmount={true}
-              ref={videoPlayer}
-              pip={false}
-              width={`100%`}
-              height={`100%`}
-              // wrapper={StyledVideoPlayerWrapper}
-            />
-            {!isVideoReady ? (
-              <VideoPlayerFallbackWrapper>
-                <LoadingText> Loading..</LoadingText>{" "}
-              </VideoPlayerFallbackWrapper>
-            ) : null}
+            <VideoPlayer onMouseMove={handleMouseEnter} url={props.item.video_url} isOverlayVisible={isVisible}/>
           </>
         ) : null}
 
         {props.item && props.item.type === "TEXT" && props.item.text ? (
-          <TextWrapper>
-            <OverlaySection>
-              <Title> {props.item.title}</Title>
-              <Text> {props.item.text}</Text>
-            </OverlaySection>
-
-            <OverlaySection>
-              <Title ref={videoPlayer} onClick={() => toggleShowCredits()}>
-                {" "}
-                Workgroup{" "}
-              </Title>
-              {showCredits ? (
-                <>
-                  <Text> Film by Vilja Achté</Text>
-                  <Text> Based on a story by Kanerva Lehtonen</Text>
-                  <Text>
-                    {" "}
-                    Screenwriting by Vilja Achté and Kanerva Lehtonen
-                  </Text>
-                  <Text> Sound design and composition by Lauri Achté</Text>
-                  <Text> Narration by Inka Achté</Text>
-                  <Text> Translation by Maija Timonen</Text>
-                  <Text> Website by Thomas Lawanson</Text>
-                  <Text> Logo design by Hanna Valle</Text>
-                  <Text>
-                    {" "}
-                    With the support of The Finnish Cultural Foundation, Grafia
-                    and The Arts Promotion Centre Finland
-                  </Text>
-                </>
-              ) : null}
-            </OverlaySection>
-          </TextWrapper>
+          <AboutText title={props.item.title} text={props.item.text}/>
         ) : null}
       </FlexWrapper>
     </OverlayWrapper>
