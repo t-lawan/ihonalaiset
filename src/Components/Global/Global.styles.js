@@ -71,10 +71,10 @@ h1,h2,h3,h4,h5,h6 {
   h1 {
   margin-bottom: 1.45rem;
   font-size: 2.5rem;
+  /* font-size: 4vw; */
   line-height: 1.1;
   @media (max-width: ${size.tabletL}) {
-
-font-size: 2rem;
+    /* font-size: 6vw; */
 }
 }
 h2 {
@@ -149,11 +149,12 @@ p, li, a, span{
   padding-right: 0;
   padding-top: 0;
   font-size: 1.5rem;
+  font-size: 2vh;
   letter-spacing: 0.03em;
   line-height: 1.05em;
   @media (max-width: ${size.tabletL}) {
 
-    font-size: 1rem;
+    /* font-size: 1rem; */
   }
 }
 

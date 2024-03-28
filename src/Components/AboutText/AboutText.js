@@ -7,7 +7,7 @@ const AboutTextWrapper = styled.div`
   width: 50%;
   align-self: flex-start;
   position: absolute;
-  top: 20%;
+  top: 15%;
   
   @media (max-width: ${size.tablet}) {
     width: 100%;
